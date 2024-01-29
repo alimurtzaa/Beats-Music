@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beats Music</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/bf6a41b78a.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="main">
+        <div class="container">
+            <nav>
+                <div class="circle">
+                    <i class="fa-solid fa-angle-left"></i>
+                </div>
+                <div class="circle">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
+            </nav>
+            <img id="song-image" src="images/song1.jpeg" alt="Song image">
+            <h1 id="song-title">I Ain't Worried</h1>
+            <p id="artist">OneRepublic</p>
+
+            <audio src="media/song1.mp3" type="audio/mpeg" id="song"></audio>
+            <input type="range" value="0" id="progress">
+            <div class="controls">
+                <div><i class="fa-solid fa-backward-step" title="Previous" id="previous"></i></div>
+                <div><i class="fa-solid fa-play" title="Play" id="ctrlIcon"></i></div>
+                <div><i class="fa-solid fa-forward-step" title="Next" id="next"></i></div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        let progress = document.getElementById("progress");
+        let song = document.querySelector("audio");
+        let ctrlIcon = document.getElementById("ctrlIcon");
+        let next = document.getElementById("next");
+        let previous = document.getElementById("previous");
+        let title = document.getElementById("song-title");
+        let artist = document.getElementById("artist");
+        let songImage = document.getElementById("song-image");
+
+        let songs = [{
+            name: "song1",
+            title: "I Ain't Worried",
+            artist: "OneRepublic"
+        },
+        {
+            name: "song2",
+            title: "Counting Stars",
+            artist: "OneRepublic"
+        },
+        {
+            name: "song3",
+            title: "Demons",
+            artist: "Imagine Dragons"
+        }]
+
+
+        //play pause button
+        function playPause() {
+            if (ctrlIcon.classList.contains("fa-pause")) {
+                song.pause();
+                ctrlIcon.classList.replace("fa-pause", "fa-play");
+                ctrlIcon.title = "Play";
+
+            } else {
+                song.play();
+                ctrlIcon.classList.replace("fa-play", "fa-pause");
+                ctrlIcon.title = "Pause";
+
+            }
+        }
+        ctrlIcon.onclick = playPause;
+
+
+        //progress bar
+        song.onloadedmetadata = function () {
+            progress.max = song.duration;
+            progress.value = song.currentTime;
+        }
+
+        if(song.play()) {
+            setInterval(() => {
+                progress.value = song.currentTime;
+            }, 500);
+        }
+
+        progress.onclick = function () {
+            song.play();
+            song.currentTime = progress.value;
+            ctrlIcon.classList.replace("fa-play", "fa-pause");
+            ctrlIcon.title = "Pause";
+        }
+
+
+        //changing the music
+        let loadSong = (songs) => {
+            title.textContent = songs.title;
+            artist.textContent = songs.artist;
+            song.src = "media/" + songs.name + ".mp3";
+            songImage.src = "images/" + songs.name + ".jpeg";
+        } 
+
+        songIndex = 0;
+
+        let nextSong = () => {
+            songIndex = (songIndex + 1) % songs.length;
+            loadSong(songs[songIndex]);
+            song.play();
+            ctrlIcon.classList.replace("fa-play", "fa-pause");
+            ctrlIcon.title = "Pause";
+        }
+
+        let prevSong = () => {
+            songIndex = (songIndex - 1 + songs.length) % songs.length;
+            loadSong(songs[songIndex]);
+            song.play();
+            ctrlIcon.classList.replace("fa-play", "fa-pause");
+            ctrlIcon.title = "Pause";
+        }
+
+        next.onclick = nextSong;
+        previous.onclick = prevSong;
+
+        // Autoplay next song
+        song.addEventListener("ended", () => {
+            nextSong();
+        })
+
+
+    </script>
+</body>
+
+</html>
